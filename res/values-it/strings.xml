@@ -1,0 +1,6 @@
+<resources>
+
+    <string name="widget_title">Titolo della nota</string>
+    <string name="widget_content">Contenuto della nota</string>
+
+</resources>
