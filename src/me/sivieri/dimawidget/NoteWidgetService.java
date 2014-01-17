@@ -1,11 +1,12 @@
-package me.sivieri.dimatodos;
+package me.sivieri.dimawidget;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -18,12 +19,18 @@ public class NoteWidgetService extends RemoteViewsService {
 }
 
 class Note {
+	private int id;
 	private String title;
 	private String content;
 
-	public Note(String title, String content) {
+	public Note(int id, String title, String content) {
+		this.id = id;
 		this.title = title;
 		this.content = content;
+	}
+
+	public int getId() {
+		return this.id;
 	}
 
 	public String getTitle() {
@@ -40,11 +47,9 @@ class NoteWidgetServiceFactory implements RemoteViewsService.RemoteViewsFactory 
 
 	private List<Note> notes = new ArrayList<Note>();
 	private Context context;
-	private int appWidgetId;
 
 	public NoteWidgetServiceFactory(Context applicationContext, Intent intent) {
 		this.context = applicationContext;
-		this.appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 	}
 
 	@Override
@@ -54,50 +59,54 @@ class NoteWidgetServiceFactory implements RemoteViewsService.RemoteViewsFactory 
 
 	@Override
 	public long getItemId(int arg0) {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.notes.get(arg0).getId();
 	}
 
 	@Override
 	public RemoteViews getLoadingView() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public RemoteViews getViewAt(int arg0) {
-		// TODO Auto-generated method stub
-		return null;
+		Note note = this.notes.get(arg0);
+		RemoteViews rv = new RemoteViews(this.context.getPackageName(), R.layout.note_item);
+		rv.setTextViewText(R.id.noteTitle, note.getTitle());
+		rv.setTextViewText(R.id.noteContent, note.getContent());
+
+		return rv;
 	}
 
 	@Override
 	public int getViewTypeCount() {
-		// TODO Auto-generated method stub
-		return 0;
+		return 1;
 	}
 
 	@Override
 	public boolean hasStableIds() {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
 	public void onCreate() {
-		// TODO Auto-generated method stub
-
+		String[] projection = { "_id", "title", "content" };
+		Cursor cursor = this.context.getContentResolver().query(Uri.parse("content://me.sivieri.dimatodos.notescontentprovider/notes"), projection, null, null, null);
+		if (cursor != null && cursor.getCount() > 0) {
+			for (boolean hasNext = cursor.moveToFirst(); hasNext; hasNext = cursor.moveToNext()) {
+				Note note = new Note(cursor.getInt(cursor.getColumnIndexOrThrow("_id")), cursor.getString(cursor.getColumnIndexOrThrow("title")), cursor.getString(cursor
+				        .getColumnIndexOrThrow("content")));
+				this.notes.add(note);
+			}
+		}
 	}
 
 	@Override
 	public void onDataSetChanged() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void onDestroy() {
-		// TODO Auto-generated method stub
-
+		this.notes.clear();
 	}
 
 }

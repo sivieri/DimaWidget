@@ -3,7 +3,5 @@
     android:minHeight="250dp"
     android:updatePeriodMillis="600000"
     android:initialLayout="@layout/note_widget"
-    android:configure="me.sivieri.dimatodos.NoteWidgetConfiguration" 
-    android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen">
 </appwidget-provider>

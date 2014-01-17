@@ -2,5 +2,6 @@
 
     <string name="widget_title">Titolo della nota</string>
     <string name="widget_content">Contenuto della nota</string>
+    <string name="empty_view_text">Nessuna nota trovata</string>
 
 </resources>

@@ -1,4 +1,4 @@
-package me.sivieri.dimatodos;
+package me.sivieri.dimawidget;
 
 import me.sivieri.dimawidget.R;
 import android.appwidget.AppWidgetManager;
@@ -23,6 +23,7 @@ public class NoteWidgetProvider extends AppWidgetProvider {
 			// to a RemoteViewsService through the specified intent.
 			// This is how you populate the data.
 			rv.setRemoteAdapter(appWidgetIds[i], R.id.noteStack, intent);
+			rv.setEmptyView(R.id.noteStack, R.id.empty_view);
 			appWidgetManager.updateAppWidget(appWidgetIds[i], rv);
 		}
 		super.onUpdate(context, appWidgetManager, appWidgetIds);
